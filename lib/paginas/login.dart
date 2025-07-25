@@ -9,26 +9,50 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  Color buttonColor = const Color(0xFF5C54A5); // Cor inicial do botão (roxo)
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController senhaController = TextEditingController();
+
+  Color buttonColor = const Color(0xFF5C54A5); // Roxo inicial
+
+  bool emailValido(String email) {
+    final padraoEmail = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
+    return padraoEmail.hasMatch(email);
+  }
 
   void piscarBotao() {
+    String email = emailController.text.trim();
+    String senha = senhaController.text;
+
+    if (email.isEmpty || senha.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha todos os campos.')),
+      );
+      return;
+    }
+
+    if (!emailValido(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('E-mail inválido.')),
+      );
+      return;
+    }
+
     setState(() {
-      buttonColor = const Color(0xFFFFA500); // Cor laranja ao clicar
+      buttonColor = const Color(0xFFFFA500); // Laranja
     });
 
     Timer(const Duration(milliseconds: 800), () {
       setState(() {
-        buttonColor = const Color(0xFF5C54A5); // Volta para cor original
+        buttonColor = const Color(0xFF5C54A5); // Volta ao roxo
       });
 
-      // Exibe mensagem
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Usuário autenticado com sucesso!')),
       );
-    });
-    Future.delayed(const Duration(seconds: 2), () {
-      //mais um delay
-      Navigator.pushNamed(context, '/home');
+
+      final username = email.split('@')[0];
+      // Navega para '/home', substituindo a tela atual, e passa o username como argumento
+      Navigator.pushReplacementNamed(context, '/home', arguments: username);
     });
   }
 
@@ -40,7 +64,6 @@ class _LoginState extends State<Login> {
         child: Center(
           child: Column(
             children: [
-              // Imagem roxa no topo
               Container(
                 width: double.infinity,
                 height: 222,
@@ -51,24 +74,20 @@ class _LoginState extends State<Login> {
                   ),
                 ),
               ),
-
-              // Título
               const Text(
                 'Login',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF4958AF),
-                  backgroundColor: Colors.white,
                 ),
               ),
               const SizedBox(height: 49),
-
-              // Campo E-mail
               Container(
                 width: 274,
                 margin: const EdgeInsets.only(bottom: 25),
                 child: TextField(
+                  controller: emailController,
                   decoration: InputDecoration(
                     hintText: 'E-mail',
                     hintStyle: const TextStyle(
@@ -84,11 +103,10 @@ class _LoginState extends State<Login> {
                   ),
                 ),
               ),
-
-              // Campo Senha
               Container(
                 width: 274,
                 child: TextField(
+                  controller: senhaController,
                   obscureText: true,
                   decoration: InputDecoration(
                     hintText: 'Senha',
@@ -105,10 +123,7 @@ class _LoginState extends State<Login> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
-              // Texto "Esqueceu sua senha?"
               Container(
                 width: 200,
                 alignment: Alignment.centerRight,
@@ -118,12 +133,9 @@ class _LoginState extends State<Login> {
                   style: TextStyle(
                     fontSize: 14,
                     color: Color(0xFF8790AF),
-                    backgroundColor: Colors.white,
                   ),
                 ),
               ),
-
-              // Botão Entrar com efeito piscar
               SizedBox(
                 width: 140,
                 child: ElevatedButton(
@@ -134,36 +146,23 @@ class _LoginState extends State<Login> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {
-                    piscarBotao();
-                    //  validação de campos, lógica
-                  },
+                  onPressed: piscarBotao,
                   child: const Text(
                     'Entrar',
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.white,
-                    ),
+                    style: TextStyle(fontSize: 24, color: Colors.white),
                   ),
                 ),
               ),
-
               const SizedBox(height: 30),
-
-              // Botão para ir para tela de cadastro
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/cadastro');
                 },
                 child: const Text(
                   'Não tem uma conta? Registre-se',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF5C54A5),
-                  ),
+                  style: TextStyle(fontSize: 14, color: Color(0xFF5C54A5)),
                 ),
               ),
-
               const SizedBox(height: 30),
             ],
           ),

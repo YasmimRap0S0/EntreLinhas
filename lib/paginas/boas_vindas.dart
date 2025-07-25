@@ -9,7 +9,7 @@ class BoasVindas extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/login');
+        Navigator.pushNamed(context, '/cadastro');
       },
       child: Scaffold(
         body: Container(

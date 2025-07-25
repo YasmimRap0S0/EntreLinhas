@@ -14,13 +14,23 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Entrelinhas App',
+      title: 'Entrelinhas',
+      debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
         '/': (context) => const BoasVindas(),
-        '/cadastro': (context) => const Cadastro(),
         '/login': (context) => const Login(),
-        '/home': (context) => const Home(),
+        '/cadastro': (context) => const Cadastro(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/home') {
+          final username = settings.arguments as String; //recupera o argumento
+          // Retorna a página Home, passando o username para o construtor
+          return MaterialPageRoute(
+            builder: (context) => Home(username: username),
+          );
+        }
+        return null;
       },
     );
   }
